@@ -74,4 +74,7 @@ public class MinHeap {
         int tmp = heap[i]; heap[i] = heap[j]; heap[j] = tmp;
         tracker.swap();
     }
+    public int getSize() {
+        return size;
+    }
 }
