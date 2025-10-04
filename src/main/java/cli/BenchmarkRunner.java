@@ -7,23 +7,36 @@ import java.util.Random;
 
 public class BenchmarkRunner {
     public static void main(String[] args) {
-        int size = args.length > 0 ? Integer.parseInt(args[0]) : 10000;
-        int trials = args.length > 1 ? Integer.parseInt(args[1]) : 5;
+        int size = 10000;
+        int trials = 5;
 
-        System.out.printf("Benchmark MinHeap (size=%d, trials=%d)%n", size, trials);
+        Random rand = new Random();
+
+        System.out.println("Benchmark MinHeap (size=" + size + ", trials=" + trials + ")");
 
         for (int t = 1; t <= trials; t++) {
             PerformanceTracker tracker = new PerformanceTracker();
             MinHeap heap = new MinHeap(size, tracker);
-            Random rnd = new Random();
 
             long start = System.nanoTime();
-            for (int i = 0; i < size; i++) heap.insert(rnd.nextInt());
-            while (!heap.isEmpty()) heap.extractMin();
+            // Insert
+            for (int i = 0; i < size; i++) {
+                heap.insert(rand.nextInt());
+            }
+            // Extract all
+            while (heap.getSize() > 0) {
+                heap.extractMin();
+            }
             long end = System.nanoTime();
 
-            System.out.printf("Trial %d: time=%.3f ms, %s%n",
-                    t, (end - start) / 1e6, tracker);
+            long timeMs = (end - start) / 1_000_000;
+
+            System.out.printf(
+                    "Trial %d: time=%d ms, Comparisons=%d, Swaps=%d, Accesses=%d, Allocs=%d%n",
+                    t, timeMs, tracker.getComparisons(), tracker.getSwaps(),
+                    tracker.getAccesses(), tracker.getAllocations()
+            );
         }
     }
 }
+
